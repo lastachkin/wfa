@@ -79,65 +79,72 @@ function onCreate(ev) {
          "author": String($("#uauthor").val()),
     });
 
-    $.ajax({
-        method: "POST",
-        url: "http://localhost:2403/books",
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader("Content-Type", "application/json");
-        },
-        data: data
-      })
-        .done(function( msg ) {
-            alert("Data added successfully!");
-            document.getElementById("createForm").dispatchEvent(new Event('submit'));
-        });
+    let promise = new Promise(function() {
+        $.ajax({
+            method: "POST",
+            url: "http://localhost:2403/books",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Content-Type", "application/json");
+            },
+            data: data
+          })
+            .done(function( msg ) {
+                alert("Data added successfully!");
+                document.getElementById("createForm").dispatchEvent(new Event('submit'));
+            });
+      });
 }
 
 function onRead() {
-    $.ajax({
-        method: "GET",
-        url: "http://localhost:2403/books/",
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader("Content-Type", "application/json");
-        },
-        success: function(res) {
-            result=JSON.parse(res);
-            var resultTBody=document.createElement('tbody');
-            result.map(function(book){
-                resultTBody.appendChild(parseBookToTableRow(book));
-            });
 
-            var table=document.getElementById('rTBody').parentElement;
-            table.replaceChild(resultTBody,document.getElementById('rTBody'));
-            resultTBody.id='rTBody';
-        }
-      })
+    let promise = new Promise(function(resolve, reject) {
+        $.ajax({
+            method: "GET",
+            url: "http://localhost:2403/books/",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Content-Type", "application/json");
+            },
+            success: function(res) {
+                result=JSON.parse(res);
+                var resultTBody=document.createElement('tbody');
+                result.map(function(book){
+                    resultTBody.appendChild(parseBookToTableRow(book));
+                });
+    
+                var table=document.getElementById('rTBody').parentElement;
+                table.replaceChild(resultTBody,document.getElementById('rTBody'));
+                resultTBody.id='rTBody';
+            }
+          })
+    });
 }
 
 function onPrepareUpdate(ev){
 
     ev.preventDefault();
 
-    $.ajax({
-        method: "GET",
-        url: "http://localhost:2403/books/",
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader("Content-Type", "application/json");
-        },
-        success: function(res) {
-            result=JSON.parse(this.response);
-            var ids=document.createElement('select');
-            ids.className='form-control';
-            result.map(function(nthCPU){
-                var id=document.createElement('option');
-                id.innerHTML=nthCPU['id'];
-                ids.appendChild(id);
-            });
-            var form=document.getElementById('uid').parentElement;
-            form.replaceChild(ids,document.getElementById('uid'));
-            ids.id='uid';
-        }
-      })
+    let promise = new Promise(function(resolve, reject) {
+        $.ajax({
+            method: "GET",
+            url: "http://localhost:2403/books/",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Content-Type", "application/json");
+            },
+            success: function(res) {
+                result=JSON.parse(this.response);
+                var ids=document.createElement('select');
+                ids.className='form-control';
+                result.map(function(nthCPU){
+                    var id=document.createElement('option');
+                    id.innerHTML=nthCPU['id'];
+                    ids.appendChild(id);
+                });
+                var form=document.getElementById('uid').parentElement;
+                form.replaceChild(ids,document.getElementById('uid'));
+                ids.id='uid';
+            }
+          })
+    });
 }
 
 function onUpdate(ev) {
@@ -150,24 +157,27 @@ function onUpdate(ev) {
          "author": String($("#uauthor").val()),
     });
 
-    $.ajax({
-        method: "PUT",
-        url: "http://localhost:2403/books/"+document.getElementById("uid").value,
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader("Content-Type", "application/json");
-        },
-        data: data
-      })
-        .done(function( msg ) {
-            alert("Data changed successfully!");
-        });
+    let promise = new Promise(function(resolve, reject) {
+        $.ajax({
+            method: "PUT",
+            url: "http://localhost:2403/books/"+document.getElementById("uid").value,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Content-Type", "application/json");
+            },
+            data: data
+          })
+            .done(function( msg ) {
+                alert("Data changed successfully!");
+            });
+    });
 }
 
 function onPrepareDelete(ev){
 
     ev.preventDefault();
 
-    $.ajax({
+    let promise = new Promise(function(resolve, reject) {
+        $.ajax({
             url: "http://localhost:2403/books/",
             type: 'GET',
             headers: {"Content-Type": "application/json"},
@@ -185,21 +195,24 @@ function onPrepareDelete(ev){
                 ids.id='did';
             }
         });
+      });
 }
 
 function onDelete(ev) {
     ev.preventDefault();
 
-    $.ajax({
-        method: "DELETE",
-        url: "http://localhost:2403/books/"+document.getElementById("did").value,
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader("Content-Type", "application/json");
-        }
-      })
-        .done(function( msg ) {
-            alert("Data changed successfully!");
-        });
+    let promise = new Promise(function(resolve, reject) {
+        $.ajax({
+            method: "DELETE",
+            url: "http://localhost:2403/books/"+document.getElementById("did").value,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("Content-Type", "application/json");
+            }
+          })
+            .done(function( msg ) {
+                alert("Data changed successfully!");
+            });
+      });
 }
 
 function parseBookToTableRow(books){
